@@ -1,8 +1,7 @@
 package HWbonbons;
+
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 class CandyBox implements SweetBox {
     private ArrayList<BoxOfSweets> sweets = new ArrayList<>();
@@ -28,11 +27,7 @@ class CandyBox implements SweetBox {
 
     // Метод для получения общего веса коробки
     public double getTotalWeight() {
-        double totalWeight = 0;
-        for (BoxOfSweets sweet : sweets) {
-            totalWeight += sweet.weight;
-        }
-        return totalWeight;
+        return sweets.stream().mapToDouble(BoxOfSweets::getWeight).sum();
     }
 
     // Метод для получения общей стоимости коробки
@@ -53,23 +48,50 @@ class CandyBox implements SweetBox {
 
     // Метод для оптимизации коробки по весу
     public void optimizeWeight(double maxWeight) {
-        // Удаляем сладости с наименьшим весом и наименьшей ценой
-        while (getTotalWeight() > maxWeight && !sweets.isEmpty()) {
-            // Сортируем по весу, затем по цене
-            sweets.sort(Comparator.comparingDouble(BoxOfSweets::getWeight).thenComparingDouble(BoxOfSweets::getPrice));
-            // Удаляем первую сладость из списка (самую лёгкую и дешёвую)
-            sweets.remove(0);
+        // Сортируем сладости по весу (от меньшего к большему)
+        sweets.sort(Comparator.comparingDouble(BoxOfSweets::getWeight));
+
+        System.out.println("Начинаем оптимизацию по весу. Максимальный вес: " + maxWeight);
+
+        // Удаляем сладости с наименьшим весом, пока общий вес больше maxWeight
+        while (getTotalWeight() > maxWeight) {
+            if (!sweets.isEmpty()) {
+                System.out.println("Текущий вес коробки: " + getTotalWeight() + " кг");
+                System.out.println("Удаляем сладость: " + sweets.get(0));
+                sweets.remove(0);
+            } else {
+                System.out.println("Коробка пуста, больше нечего удалять.");
+                break;
+            }
         }
+
+        System.out.println("Оптимизация завершена. Итоговый вес: " + getTotalWeight() + " кг");
     }
 
     // Метод для оптимизации коробки по цене
-    public void optimizePrice(double maxPrice) {
-        // Удаляем сладости с наименьшим весом и наименьшей ценой
-        while (getTotalPrice() > maxPrice && !sweets.isEmpty()) {
-            // Сортируем по цене, затем по весу
-            sweets.sort(Comparator.comparingDouble(BoxOfSweets::getPrice).thenComparingDouble(BoxOfSweets::getWeight));
-            // Удаляем первую сладость из списка (самую дешёвую и лёгкую)
-            sweets.remove(0);
+    public void optimizePrice(double maxWeight) {
+        // Сортируем сладости по цене (от меньшего к большему)
+        sweets.sort(Comparator.comparingDouble(BoxOfSweets::getPrice));
+
+        System.out.println("Начинаем оптимизацию по цене. Максимальный вес: " + maxWeight);
+
+        // Удаляем сладости с наименьшей ценой, пока общий вес больше maxWeight
+        while (getTotalWeight() > maxWeight) {
+            if (!sweets.isEmpty()) {
+                System.out.println("Текущий вес коробки: " + getTotalWeight() + " кг");
+                System.out.println("Удаляем сладость: " + sweets.get(0)); // Наименьшая цена
+                sweets.remove(0);
+            } else {
+                System.out.println("Коробка пуста, больше нечего удалять.");
+                break;
+            }
         }
+
+        System.out.println("Оптимизация завершена. Итоговый вес: " + getTotalWeight() + " кг");
     }
+    @Override
+    public String toString(String name, double weight, double price) {
+        return "Сладость [Название: " + name + ", Вес: " + weight + " кг, Цена: " + price + " руб.]";
+    }
+
 }

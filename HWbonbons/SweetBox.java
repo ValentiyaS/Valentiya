@@ -1,5 +1,4 @@
 package HWbonbons;
-
 import java.util.List;
 
 interface SweetBox {
@@ -10,4 +9,6 @@ interface SweetBox {
     double getTotalPrice();
     void showAllSweets();
 
+
+    String toString(String name, double weight, double price);
 }
